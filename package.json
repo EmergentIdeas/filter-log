@@ -1,0 +1,24 @@
+{
+  "name": "filter-log",
+  "version": "0.0.1",
+  "description": "flexible, minimalistic logging",
+  "main": "filter-log.js",
+  "scripts": {
+    "test": "node_modules/mocha/bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EmergentIdeas/filter-log.git"
+  },
+  "keywords": [
+    "logging",
+    "micro",
+    "streams"
+  ],
+  "author": "Dan Kolz",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/EmergentIdeas/filter-log/issues"
+  },
+  "homepage": "https://github.com/EmergentIdeas/filter-log#readme"
+}
