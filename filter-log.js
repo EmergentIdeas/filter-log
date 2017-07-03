@@ -113,7 +113,7 @@ filterLog.defineProcessor = function(/* string */ name, /* object */ baseData,
 	// should be a function or stream of some sort
 	procData.transformer = transformer || 
 		(procData.destination._writableState.objectMode == true ? 
-			createPass() : createStringifier(','))
+			createPass() : createStringifier(null, ','))
 	
 	if(typeof procData.filter == 'function') {
 		procData.filter = createFilterStream(procData.filter)

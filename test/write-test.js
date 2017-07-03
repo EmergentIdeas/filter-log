@@ -16,7 +16,7 @@ describe("does writing work", function() {
 		filog.defineProcessor('string-out', null, out)
 		
 		log1.write({msg: 'hello'})
-		assert.equal(',{"name":"standard","msg":"hello"}', out.data)
+		assert.equal('{"name":"standard","msg":"hello"},', out.data)
 	})
 	
 	it("a debug write", function() {
@@ -25,7 +25,7 @@ describe("does writing work", function() {
 		filog.defineProcessor('string-out', null, out)
 		
 		log1.debug({msg: 'hello'})
-		assert.equal(',{"name":"standard","msg":"hello","level":10}', out.data)
+		assert.equal('{"name":"standard","msg":"hello","level":10},', out.data)
 	})
 	
 	it("an info write", function() {
@@ -34,7 +34,7 @@ describe("does writing work", function() {
 		filog.defineProcessor('string-out', null, out)
 		
 		log1.info({msg: 'hello'})
-		assert.equal(',{"name":"standard","msg":"hello","level":20}', out.data)
+		assert.equal('{"name":"standard","msg":"hello","level":20},', out.data)
 	})
 	
 	it("a debug string write", function() {
@@ -43,7 +43,7 @@ describe("does writing work", function() {
 		filog.defineProcessor('string-out', null, out)
 		
 		log1.debug("hello there")
-		assert.equal(',{"name":"standard","msg":"hello there","level":10}', out.data)
+		assert.equal('{"name":"standard","msg":"hello there","level":10},', out.data)
 	})	
 	
 	it("a debug formatted string write", function() {
@@ -52,7 +52,7 @@ describe("does writing work", function() {
 		filog.defineProcessor('string-out', null, out)
 		
 		log1.debug("hello there %d", 56)
-		assert.equal(',{"name":"standard","msg":"hello there 56","level":10}', out.data)
+		assert.equal('{"name":"standard","msg":"hello there 56","level":10},', out.data)
 	})	
 
 	
