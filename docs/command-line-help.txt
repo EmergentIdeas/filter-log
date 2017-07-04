@@ -1,0 +1,9 @@
+Filter Log helps create, save, and format log information. The command
+line tool will format JSON based logs into more human-readable lines. To use filter-log,
+pipe the log JSON into the command. The date of the log entry and the message from
+the log entry will show up on a single line.
+
+cat my-log.json | filter-log
+
+
+
