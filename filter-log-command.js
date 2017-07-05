@@ -37,8 +37,5 @@ process.stdin
 				callback()
 			}
 		}
-		
-		
 	})
-	
 )

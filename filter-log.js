@@ -21,7 +21,13 @@ function makeLogger(name, stream) {
 	stream._name = name
 	
 	stream._transform = function(data, enc, callback) {
-		writeToProcessors(_.extend(filterLog.baseInformationGenerator(), logsData[name], stream.loggerSpecificData, data))
+		if(typeof data == 'string') {
+			data = {
+				msg: data
+			}
+		}
+		writeToProcessors(_.extend(filterLog.baseInformationGenerator(), 
+		{loggerName: name}, logsData[name], stream.loggerSpecificData, data))
 		callback()
 	}
 	
@@ -50,7 +56,7 @@ var filterLog = function() {
 	
 	
 	var initData = {}
-	var loggerName = filterLog.defaultData.name
+	var loggerName = filterLog.defaultData.loggerName
 	var hasSpecificData = false
 	
 	// Look at the first two arguments. This is either a name and base information
@@ -65,12 +71,12 @@ var filterLog = function() {
 			
 			if(args.length > 0 && typeof args[0] == 'object' && !isStream(args[0])) {
 				initData = args.shift()
-				loggerName = initData.name || loggerName
+				loggerName = initData.loggerName || loggerName
 				hasSpecificData = true
 			}
 		}
 		else if(typeof first == 'object' && !isStream(first)) {
-			loggerName = first.name || loggerName
+			loggerName = first.loggerName || loggerName
 			initData = first
 			hasSpecificData = true
 		}
@@ -81,7 +87,7 @@ var filterLog = function() {
 		}
 	}
 	
-	initData.name = loggerName
+	initData.loggerName = loggerName
 	
 	var logger = makeLogger(loggerName, createPass())
 	if(hasSpecificData) {
@@ -89,14 +95,15 @@ var filterLog = function() {
 		logger.loggerSpecificData = initData
 	}
 	
-	if(!logsData[loggerName]) {
-		// this logger doesn't exists. That's the only way we'll pay attention
-		// to a data definition
-		initData = _.extend({}, filterLog.defaultData, initData)
-		logsData[loggerName] = initData
-	}
+	
 	
 	return logger
+}
+
+filterLog.defineLoggerBaseData = function(loggerName, data) {
+	data = _.extend({}, data)
+	delete data.loggerName
+	logsData[loggerName] = data
 }
 
 filterLog.defineProcessor = function(/* string */ name, /* object */ baseData, 
@@ -131,7 +138,7 @@ filterLog.createStdOutProcessor = function() {
 }
 
 filterLog.defaultData = {
-	name: 'standard'
+	loggerName: 'standard'
 }
 
 filterLog.clearProcessors = function() {

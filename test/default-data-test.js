@@ -15,7 +15,7 @@ describe("basic tests that the default data initialization works", function() {
 	})
 	
 	it("passed initialization name", function() {
-		var log1 = filog({name: 'log1'})
+		var log1 = filog({loggerName: 'log1'})
 		assert.equal('log1', log1._name)
 	})
 })
