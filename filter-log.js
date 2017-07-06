@@ -134,7 +134,7 @@ filterLog.defineProcessor = function(/* string */ name, /* object */ baseData,
 }
 
 filterLog.createStdOutProcessor = function() {
-	filterLog.defineProcessor('std-out')
+	filterLog.defineProcessor('std-out', {}, process.stdout)
 }
 
 filterLog.defaultData = {
