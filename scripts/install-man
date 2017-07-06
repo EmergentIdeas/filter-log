@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# the user shows up as nobody if we're installing globally
+# we only want to try to install the man page if we're doing a global install
+if [ `whoami` = "nobody" ]
+then
+	cp docs/filter-log.1 /usr/local/share/man/man1/
+	mandb
+fi

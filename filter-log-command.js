@@ -8,7 +8,7 @@ var fs = require('fs')
 
 
 if(argv.h || argv.help || process.stdin.isTTY) {
-	fs.createReadStream('./docs/command-line-help.txt').pipe(process.stdout)
+	fs.createReadStream(require.resolve('./docs/command-line-help.txt')).pipe(process.stdout)
 	return
 }
 
