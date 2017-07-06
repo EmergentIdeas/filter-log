@@ -145,6 +145,10 @@ filterLog.clearProcessors = function() {
 	logsProc = {}
 }
 
+filterLog.removeProcessor = function(name) {
+	delete logsProc[name] 
+}
+
 filterLog.baseInformationGenerator = function() {
 	return {
 		date: new Date()
