@@ -11,6 +11,12 @@ Logging is really two things.
 
 Filter log separates those concerns using the event bus pattern. Code that produces log entries get tools that make event log entries easy to create and informational. The application can set up how log events will be captured and saved. Log events are JS objects so we can save lots of information.
 
+## Install 
+```
+npm install filter-log
+```
+Also, if installing globally and you want the man documentation for the command line client, run `sudo ./scripts/install-man` to install the man pages
+
 ## The Basic Boring Example
 
 ```

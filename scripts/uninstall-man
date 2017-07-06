@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# the user shows up as nobody if we're installing globally
 # we only want to try to uninstall the man page if we're doing a global uninstall
-if [ `whoami` = "nobody" ]
-then
-	rm /usr/local/share/man/man1/filter-log.1
-	mandb
-fi
+rm /usr/local/share/man/man1/filter-log.1
+mandb

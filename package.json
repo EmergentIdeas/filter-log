@@ -7,9 +7,7 @@
     "test": "node_modules/mocha/bin/mocha",
     "testDebug": "node_modules/mocha/bin/mocha --inspect --debug-brk",
 	"gen-random-logs": "./examples/gen-random-logs.js > examples/gen-random-logs.json",
-	"process-1": "cat examples/gen-random-logs.json | ./examples/process-1.js > examples/process-1.txt",
-	"postinstall": "./scripts/install-man",
-	"postuninstall": "./scripts/uninstall-man"
+	"process-1": "cat examples/gen-random-logs.json | ./examples/process-1.js > examples/process-1.txt"
   },
   "repository": {
     "type": "git",
