@@ -20,17 +20,22 @@ Also, if installing globally and you want the man documentation for the command 
 ## The Basic Boring Example
 
 ```
+# probably somewhere in the application or environment setup code
 var filog = require('filter-log')
 filog.defineProcessor('standard', {}, process.stdout)
+
+# ... somewhat later, in a module, perhaps
+
+var filog = require('filter-log')
 var log = filog()
 log.info('hello, world!')
 ```
 
 Here we've done the basics. Line 2 creates a processor which is listening for log entries. It has no filter and will log absolutely everything. It's formatting the entries as streamable JSON strings (the default).
 
-Line 3 creates a new logger. It has the basic tools you'd expect for logging by level and string interpolation. Line 4 creates a new log entry, sets the level to "info" and publishes it.
+Line 4 creates a new logger. It has the basic tools you'd expect for logging by level and string interpolation. Line 5 creates a new log entry, sets the level to "info" and publishes it.
 
-If you run this example, a JSON formatted log entry will show up in stdout.
+If you run this example, a JSON formatted log entry will show up in stdout. (see `./examples/basic-boring.js`)
 
 ## Logging more Data
 
