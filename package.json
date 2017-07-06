@@ -5,7 +5,9 @@
   "main": "filter-log.js",
   "scripts": {
     "test": "node_modules/mocha/bin/mocha",
-    "testDebug": "node_modules/mocha/bin/mocha --inspect --debug-brk"
+    "testDebug": "node_modules/mocha/bin/mocha --inspect --debug-brk",
+	"gen-random-logs": "./examples/gen-random-logs.js > examples/gen-random-logs.json",
+	"process-1": "cat examples/gen-random-logs.json | ./examples/process-1.js > examples/process-1.txt"
   },
   "repository": {
     "type": "git",
@@ -27,7 +29,8 @@
   "homepage": "https://github.com/EmergentIdeas/filter-log#readme",
   "devDependencies": {
     "chai": "^4.0.2",
-    "mocha": "^3.4.2"
+    "mocha": "^3.4.2",
+    "random-strings": "0.0.1"
   },
   "dependencies": {
     "JSONStream": "^1.3.1",

@@ -4,7 +4,7 @@ var through2 = require('through2')
 var levels = require('../levels')
 
 /**
-Shows all messages at a log level of error or greater. They are logged numerically
+Shows all messages at a log level of info or greater. They are logged numerically
 and defined in levels.js
 
 Invoke like:
@@ -17,7 +17,7 @@ var parserPipe = JSONStream.parse(true)
 process.stdin
 	.pipe(parserPipe)
 	.pipe(through2({objectMode: true}, function(entry, enc, callback) {
-		if(entry.level && entry.level >= levels.ERROR) {}
+		if(entry.level && entry.level >= levels.INFO) {
 			process.stdout.write(entry.date + ' - ' + entry.msg)
 			process.stdout.write('\n')
 		}
