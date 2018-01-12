@@ -8,11 +8,10 @@ var createPass = require('./streams/pass-stream')
 var createFilterStream = require('./streams/filter-stream')
 var createTransformerStream = require('./streams/transform-stream')
 
-var logsData = {}
-var logsProc = {}
+
 
 function writeToProcessors(data) {
-	_.each(_.values(logsProc), function(processor) {
+	_.each(_.values(filterLog.logsProc), function(processor) {
 		processor.head.write(data)
 	})
 }
@@ -27,7 +26,7 @@ function makeLogger(name, stream) {
 			}
 		}
 		writeToProcessors(_.extend(filterLog.baseInformationGenerator(), 
-		{loggerName: name}, logsData[name], stream.loggerSpecificData, data))
+		{loggerName: name}, filterLog.logsData[name], stream.loggerSpecificData, data))
 		callback()
 	}
 	
@@ -100,10 +99,21 @@ var filterLog = function() {
 	return logger
 }
 
+if(!global['filter-log-logsData']) {
+	global['filter-log-logsData'] = {}
+}
+filterLog.logsData = global['filter-log-logsData']
+
+if(!global['filter-log-logsProc']) {
+	global['filter-log-logsProc'] = {}
+}
+filterLog.logsProc = global['filter-log-logsProc']
+
+
 filterLog.defineLoggerBaseData = function(loggerName, data) {
 	data = _.extend({}, data)
 	delete data.loggerName
-	logsData[loggerName] = data
+	filterLog.logsData[loggerName] = data
 }
 
 filterLog.defineProcessor = function(/* string */ name, /* object */ baseData, 
@@ -130,7 +140,7 @@ filterLog.defineProcessor = function(/* string */ name, /* object */ baseData,
 	}
 	procData.head = procData.filter
 	procData.head.pipe(procData.transformer).pipe(procData.destination)
-	logsProc[name] = procData
+	filterLog.logsProc[name] = procData
 }
 
 filterLog.createStdOutProcessor = function() {
@@ -142,11 +152,11 @@ filterLog.defaultData = {
 }
 
 filterLog.clearProcessors = function() {
-	logsProc = {}
+	filterLog.logsProc = {}
 }
 
 filterLog.removeProcessor = function(name) {
-	delete logsProc[name] 
+	delete filterLog.logsProc[name] 
 }
 
 filterLog.baseInformationGenerator = function() {
