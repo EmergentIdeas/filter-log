@@ -58,5 +58,16 @@ describe("tests for modifying and object destinations", function() {
 		assert.equal(0, out.data.length)
 	})
 
+	it("test error object", function() {
+		filog.clearProcessors()
+		var out = objStream()
+		filog.defineProcessor('string-out', null, out)
+		
+		let msg = 'This is a test'
+		let e = new Error(msg)
+		debugger
+		log1.info(e)
+		assert(out.data[0].error.toString().indexOf('Error: This is a test') == 0)
+	})
 	
 })

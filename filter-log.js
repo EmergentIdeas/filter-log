@@ -37,6 +37,11 @@ function makeLogger(name, stream) {
 					msg: util.format.apply(this, arguments)
 				}
 			}
+			if(data instanceof Error) {
+				data = {
+					error: data
+				}
+			}
 			if(typeof data == 'object') {
 				stream.write(_.extend({}, data, {level: filterLog.levels[key]}))
 			}
