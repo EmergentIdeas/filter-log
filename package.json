@@ -1,6 +1,6 @@
 {
   "name": "filter-log",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "description": "flexible, minimalistic logging",
   "main": "filter-log.js",
   "scripts": {

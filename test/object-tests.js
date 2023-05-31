@@ -65,9 +65,21 @@ describe("tests for modifying and object destinations", function() {
 		
 		let msg = 'This is a test'
 		let e = new Error(msg)
-		debugger
 		log1.info(e)
 		assert(out.data[0].error.toString().indexOf('Error: This is a test') == 0)
+	})
+
+	it("test error object string", function() {
+		filog.clearProcessors()
+		var out = stringStream()
+		filog.defineProcessor('string-out', null, out)
+		
+		let msg = 'This is a test'
+		let e = new Error(msg)
+		log1.info(e)
+		
+		// basically, we just want to ensure that we got a stack trace from our error
+		assert(out.data.length > 200)
 	})
 	
 })
