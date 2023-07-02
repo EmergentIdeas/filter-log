@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# we only want to try to install the man page if we're doing a global install
-cp docs/filter-log.1 /usr/local/share/man/man1/
-mandb

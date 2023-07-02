@@ -1,5 +1,3 @@
-var _ = require('underscore')
-
 var util = require('util')
 var isStream = require('is-stream')
 
@@ -11,9 +9,7 @@ var createTransformerStream = require('./streams/transform-stream')
 
 
 function writeToProcessors(data) {
-	_.each(_.values(filterLog.logsProc), function(processor) {
-		processor.head.write(data)
-	})
+	Object.values(filterLog.logsProc).forEach(processor => processor.head.write(data))
 }
 
 function makeLogger(name, stream) {
@@ -25,12 +21,12 @@ function makeLogger(name, stream) {
 				msg: data
 			}
 		}
-		writeToProcessors(_.extend(filterLog.baseInformationGenerator(), 
+		writeToProcessors(Object.assign(filterLog.baseInformationGenerator(), 
 		{loggerName: name}, filterLog.logsData[name], stream.loggerSpecificData, data))
 		callback()
 	}
 	
-	_.each(_.keys(filterLog.levels), function(key) {
+	Object.keys(filterLog.levels).forEach(key => {
 		stream[key.toLowerCase()] = function(data) {
 			if(typeof data == 'string') {
 				data = {
@@ -43,7 +39,7 @@ function makeLogger(name, stream) {
 				}
 			}
 			if(typeof data == 'object') {
-				stream.write(_.extend({}, data, {level: filterLog.levels[key]}))
+				stream.write(Object.assign({}, data, {level: filterLog.levels[key]}))
 			}
 		}
 	})
@@ -116,7 +112,7 @@ filterLog.logsProc = global['filter-log-logsProc']
 
 
 filterLog.defineLoggerBaseData = function(loggerName, data) {
-	data = _.extend({}, data)
+	data = Object.assign({}, data)
 	delete data.loggerName
 	filterLog.logsData[loggerName] = data
 }
@@ -126,7 +122,7 @@ filterLog.defineProcessor = function(/* string */ name, /* object */ baseData,
 	var procData = {
 		name: name,
 		destination: destination || process.stdout,
-		baseData: _.extend({}, baseData, { processorName: name }),
+		baseData: Object.assign({}, baseData, { processorName: name }),
 		
 		// should be a function or stream of some sort
 		filter: filter || function(item) { return true }

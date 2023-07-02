@@ -1,14 +1,17 @@
-var through2 = require('through2')
+const { Transform } = require('stream')
 
-var createStream = function() {
-	
-	var stream = through2({ objectMode: true }, function(chunk, enc, callback) {
-		this.data.push(chunk)
-	    callback()
+var createStream = function (filter) {
+
+	let stream = new Transform({
+		objectMode: true,
+
+		transform(chunk, encoding, callback) {
+			this.data.push(chunk)
+			callback()
+		}
 	})
-	
 	stream.data = []
-	
+
 	return stream
 }
 

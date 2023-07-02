@@ -1,4 +1,4 @@
-var through2 = require('through2')
+const { Transform } = require('stream')
 
 function errorSerialization(key, obj) {
 	if (obj instanceof Error) {
@@ -12,17 +12,22 @@ function errorSerialization(key, obj) {
 }
 
 var transformer = function (prefix, suffix) {
-	return through2({ objectMode: true }, function (chunk, enc, callback) {
-		var result = JSON.stringify(chunk, errorSerialization)
-		if (prefix) {
-			this.push(prefix)
+	let stream = new Transform({
+		objectMode: true,
+
+		transform(chunk, encoding, callback) {
+			var result = JSON.stringify(chunk, errorSerialization)
+			if (prefix) {
+				this.push(prefix)
+			}
+			this.push(result)
+			if (suffix) {
+				this.push(suffix)
+			}
+			callback()
 		}
-		this.push(result)
-		if (suffix) {
-			this.push(suffix)
-		}
-		callback()
 	})
+	return stream
 }
 
 module.exports = transformer

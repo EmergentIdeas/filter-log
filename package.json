@@ -1,6 +1,6 @@
 {
   "name": "filter-log",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "flexible, minimalistic logging",
   "main": "filter-log.js",
   "scripts": {
@@ -12,9 +12,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/EmergentIdeas/filter-log.git"
-  },
-  "bin": {
-    "filter-log": "./filter-log-command.js"
   },
   "keywords": [
     "logging",
@@ -33,11 +30,13 @@
     "random-strings": "0.0.1"
   },
   "dependencies": {
-    "is-stream": "^1.1.0",
-    "JSONStream": "^1.3.1",
-    "minimist": "^1.2.8",
-    "through2": "^2.0.3",
-    "tripartite": "^1.0.7",
-    "underscore": "^1.8.3"
-  }
+    "is-stream": "^1.1.0"
+  },
+  "files": [
+	"/filters",
+	"/streams",
+	"/transforms",
+	"/filter-log.js",
+	"README.md"
+  ]
 }

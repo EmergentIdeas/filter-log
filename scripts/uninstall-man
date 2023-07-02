@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# we only want to try to uninstall the man page if we're doing a global uninstall
-rm /usr/local/share/man/man1/filter-log.1
-mandb
