@@ -1,6 +1,6 @@
 {
   "name": "filter-log",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "flexible, minimalistic logging",
   "main": "filter-log.js",
   "scripts": {
@@ -37,6 +37,7 @@
 	"/streams",
 	"/transformers",
 	"/filter-log.js",
+	"/levels.js",
 	"README.md"
   ]
 }
