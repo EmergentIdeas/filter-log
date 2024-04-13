@@ -1,4 +1,4 @@
-const { Transform } = require('stream')
+const Transform = require('../streams/transform')
 
 function errorSerialization(key, obj) {
 	if (obj instanceof Error) {

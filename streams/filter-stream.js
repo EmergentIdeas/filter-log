@@ -1,4 +1,4 @@
-const { Transform } = require('stream')
+const Transform = require('./transform')
 
 var createStream = function (filter) {
 

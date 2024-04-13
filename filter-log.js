@@ -1,4 +1,3 @@
-var util = require('util')
 var isStream = require('is-stream')
 
 var createStringifier = require('./transformers/obj-to-json-string')
@@ -30,7 +29,13 @@ function makeLogger(name, stream) {
 		stream[key.toLowerCase()] = function(data) {
 			if(typeof data == 'string') {
 				data = {
-					msg: util.format.apply(this, arguments)
+					msg: data
+				}
+				
+				let args = [...arguments]
+				args.shift()
+				if(args.length > 0) {
+					data.args = args
 				}
 			}
 			if(data instanceof Error) {

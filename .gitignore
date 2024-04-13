@@ -60,3 +60,5 @@ typings/
 # generated test documents
 examples/*.txt
 examples/*.json
+
+tmp
