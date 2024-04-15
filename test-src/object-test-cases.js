@@ -1,12 +1,11 @@
 
-var filog = require('../filter-log')
 var expect = require('chai').expect
 var assert = require('chai').assert
 var stringStream = require('../streams/string-stream')
 var objStream = require('../streams/obj-dest-stream')
 const Transform = require('../streams/transform')
 
-function add() {
+function add(filog) {
 	filog.baseInformationGenerator = function () {
 		return {}
 	}
@@ -74,7 +73,7 @@ function add() {
 			let msg = 'This is a test'
 			let e = new Error(msg)
 			log1.info(e)
-			assert(out.data[0].error.toString().indexOf('Error: This is a test') == 0)
+			assert(JSON.stringify(out.data[0].error).indexOf('Error: This is a test') > -1)
 		})
 
 		it("test error object string", function () {

@@ -1,9 +1,8 @@
 
-var filog = require('../filter-log')
 var expect = require('chai').expect
 var assert = require('chai').assert
 
-function add() {
+function add(filog) {
 	describe("basic tests that the default data initialization works", function() {
 		it("no name", function() {
 			var log1 = filog()

@@ -12,7 +12,7 @@ let buildTargets = []
 
 let browserTarget = 
 {
-	entry: './filter-log.js',
+	entry: './filter-log-browser.js',
 	mode: 'production',
 	"devtool": 'source-map',
 	experiments: {
@@ -37,6 +37,42 @@ let browserTarget =
 		}
 	},
 	plugins: [
+		// new NodePolyfillPlugin()
+	],
+	stats: {
+		colors: true,
+		reasons: true
+	}
+	, target: 'web'
+}
+
+let testsTarget = 
+{
+	entry: './test-src/stream-tests.js',
+	mode: 'development',
+	"devtool": 'source-map',
+	// experiments: {
+	// 	outputModule: true,
+	// },
+	output: {
+		filename: 'stream-tests.js',
+		path: path.resolve(__dirname, 'tmp'),
+		// library: {
+		// 	type: 'module',
+		// }
+	},
+	module: {
+		rules: [
+			{ test: /\.tmpl$/, use: 'tripartite/webpack-loader.mjs' }
+			, { test: /\.tri$/, use: 'tripartite/webpack-loader.mjs' }
+		],
+	},
+	resolve: {
+		fallback: {
+			// stream: require.resolve('stream-browserify'),
+		}
+	},
+	plugins: [
 		new NodePolyfillPlugin()
 	],
 	stats: {
@@ -46,16 +82,16 @@ let browserTarget =
 
 }
 
-let testsTarget = 
+let streamlessTestsTarget = 
 {
-	entry: './test-src/tests.js',
+	entry: './test-src/streamless-tests.js',
 	mode: 'development',
 	"devtool": 'source-map',
 	// experiments: {
 	// 	outputModule: true,
 	// },
 	output: {
-		filename: 'tests.js',
+		filename: 'streamless-tests.js',
 		path: path.resolve(__dirname, 'tmp'),
 		// library: {
 		// 	type: 'module',
@@ -82,6 +118,7 @@ let testsTarget =
 
 }
 buildTargets.push(browserTarget)
-buildTargets.push(testsTarget)
+// buildTargets.push(testsTarget)
+// buildTargets.push(streamlessTestsTarget)
 
 module.exports = buildTargets

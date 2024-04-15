@@ -1,10 +1,9 @@
 
-var filog = require('../filter-log')
 var expect = require('chai').expect
 var assert = require('chai').assert
 var stringStream = require('../streams/string-stream')
 
-function add() {
+function add(filog) {
 	filog.baseInformationGenerator = function () {
 		return {}
 	}

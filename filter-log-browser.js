@@ -1,10 +1,21 @@
-var isStream = require('is-stream')
+function createTransformFunctionFromStream(stream) {
+	stream.innerFilter = stream.transform || stream._transform
+	let last
 
-var createStringifier = require('./transformers/obj-to-json-string')
-var createPass = require('./streams/pass-stream')
-var createFilterStream = require('./streams/filter-stream')
-var createTransformerStream = require('./streams/transform-stream')
+	stream.push = function(pushed) {
+		last = pushed
+	}
 
+	return function(data) {
+		last = null
+		stream.innerFilter(data, 'utf-8', function(){})
+		return last
+	}
+}
+
+function isNullish(data) {
+	return typeof data === 'undefined' || typeof data === 'null' 
+}
 
 
 function writeToProcessors(data) {
@@ -14,7 +25,7 @@ function writeToProcessors(data) {
 function makeLogger(name, stream) {
 	stream._name = name
 	
-	stream._transform = function(data, enc, callback) {
+	stream.write = function(data, enc, callback) {
 		if(typeof data == 'string') {
 			data = {
 				msg: data
@@ -22,7 +33,10 @@ function makeLogger(name, stream) {
 		}
 		writeToProcessors(Object.assign(filterLog.baseInformationGenerator(), 
 		{loggerName: name}, filterLog.logsData[name], stream.loggerSpecificData, data))
-		callback()
+
+		if(callback) {
+			callback()
+		}
 	}
 	
 	Object.keys(filterLog.levels).forEach(key => {
@@ -77,33 +91,26 @@ var filterLog = function() {
 		if(typeof first == 'string') {
 			loggerName = first
 			
-			if(args.length > 0 && typeof args[0] == 'object' && !isStream(args[0])) {
+			if(args.length > 0 && typeof args[0] == 'object') {
 				initData = args.shift()
 				loggerName = initData.loggerName || loggerName
 				hasSpecificData = true
 			}
 		}
-		else if(typeof first == 'object' && !isStream(first)) {
+		else if(typeof first == 'object') {
 			loggerName = first.loggerName || loggerName
 			initData = first
 			hasSpecificData = true
-		}
-		else if(isStream(first)) {
-			// No information about what to call it or what data to use, but first
-			// argument is a stream, so let's return it to the list
-			args.unshift(first)
 		}
 	}
 	
 	initData.loggerName = loggerName
 	
-	var logger = makeLogger(loggerName, createPass())
+	var logger = makeLogger(loggerName, {})
 	if(hasSpecificData) {
 		// They have some logger specifc data they want to use
 		logger.loggerSpecificData = initData
 	}
-	
-	
 	
 	return logger
 }
@@ -129,7 +136,7 @@ filterLog.defineProcessor = function(/* string */ name, /* object */ baseData,
 	/* stream */ destination, /* function */ filter, /* stream */ transformer) {
 	var procData = {
 		name: name,
-		destination: destination || process.stdout,
+		destination: destination || console.log,
 		baseData: Object.assign({}, baseData, { processorName: name }),
 		
 		// should be a function or stream of some sort
@@ -137,23 +144,73 @@ filterLog.defineProcessor = function(/* string */ name, /* object */ baseData,
 	}
 	
 	// should be a function or stream of some sort
-	procData.transformer = transformer || 
-		(procData.destination._writableState.objectMode == true ? 
-			createPass() : createStringifier(null, '\n'))
+	if(transformer) {
+		procData.transformer = transformer
+	}
+	else {
+		if(procData.destination._writableState && procData.destination._writableState.objectMode == false) {
+			procData.transformer = ((data) => { return JSON.stringify(data) + '\n' })
+		} 
+		else {
+			procData.transformer = ((data) => { return data })
+		}
+	}
 	
-	if(typeof procData.filter == 'function') {
-		procData.filter = createFilterStream(procData.filter)
+	if(typeof procData.filter === 'object') {
+		// Assume this is a stream then
+		procData.filter = createTransformFunctionFromStream(procData.filter)
 	}
-	if(typeof procData.transformer == 'function') {
-		procData.transformer = createTransformerStream(procData.transformer)
+	if(typeof procData.transformer === 'object') {
+		// Assume this is a stream then
+		procData.transformer = createTransformFunctionFromStream(procData.transformer)
 	}
-	procData.head = procData.filter
-	procData.head.pipe(procData.transformer).pipe(procData.destination)
+
+	procData.head = {
+		write(data) {
+			if(isNullish(data)) {
+				return
+			}
+			let included = procData.filter(data)
+			
+			if(isNullish(included)) {
+				// it was probably transformed by a filtering stream
+				return
+			}
+			if(typeof included === 'boolean') {
+				if(!included) {
+					return
+				}
+			}
+			else if(typeof included === 'object') {
+				// it was probably transformed by a filtering stream
+				data = included
+			}
+			
+			if(isNullish(data)) {
+				return
+			}
+
+			data = procData.transformer(data)
+			if(isNullish(data)) {
+				return
+			}
+			
+			
+			if(procData.destination.write) {
+				// probably a stream
+				procData.destination.write(data)
+			}
+			else if(typeof procData.destination === 'function') {
+				procData.destination(data)
+			}
+		}
+	}
+	
 	filterLog.logsProc[name] = procData
 }
 
 filterLog.createStdOutProcessor = function() {
-	filterLog.defineProcessor('std-out', {}, process.stdout)
+	filterLog.defineProcessor('std-out', {}, console.log)
 }
 
 filterLog.defaultData = {
