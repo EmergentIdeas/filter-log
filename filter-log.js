@@ -7,8 +7,20 @@ var createTransformerStream = require('./streams/transform-stream')
 
 
 
-function writeToProcessors(data) {
-	Object.values(filterLog.logsProc).forEach(processor => processor.head.write(data))
+function writeToProcessors(data, sync) {
+	Object.values(filterLog.logsProc).forEach(processor => {
+		let doIt = () => {
+			processor.head.write(data)
+		}
+		if(sync) {
+			return doIt()
+		}
+		else {
+			setTimeout(() => {
+				doIt
+			}, 1)
+		}
+	})
 }
 
 function makeLogger(name, stream) {
@@ -21,33 +33,41 @@ function makeLogger(name, stream) {
 			}
 		}
 		writeToProcessors(Object.assign(filterLog.baseInformationGenerator(), 
-		{loggerName: name}, filterLog.logsData[name], stream.loggerSpecificData, data))
+		{loggerName: name}, filterLog.logsData[name], stream.loggerSpecificData, data), stream.sync)
 		callback()
 	}
 	
 	Object.keys(filterLog.levels).forEach(key => {
 		stream[key.toLowerCase()] = function(data) {
-			if(typeof data == 'string') {
-				data = {
-					msg: data
-				}
-				
-				let args = [...arguments]
-				args.shift()
-				if(args.length > 0) {
-					data.args = args
-				}
-			}
-			if(data instanceof Error) {
-				data = {
-					error: {
-						message: data.message
-						, stack: data.stack
+			let args = [...arguments]
+			let doIt = () => {
+				if(typeof data == 'string') {
+					data = {
+						msg: data
+					}
+					
+					args.shift()
+					if(args.length > 0) {
+						data.args = args
 					}
 				}
+				if(data instanceof Error) {
+					data = {
+						error: {
+							message: data.message
+							, stack: data.stack
+						}
+					}
+				}
+				if(typeof data == 'object') {
+					stream.write(Object.assign({}, data, {level: filterLog.levels[key]}))
+				}
 			}
-			if(typeof data == 'object') {
-				stream.write(Object.assign({}, data, {level: filterLog.levels[key]}))
+			if(stream.sync) {
+				return doIt()
+			}
+			else {
+				setTimeout(doIt, 1)
 			}
 		}
 	})
@@ -98,6 +118,7 @@ var filterLog = function() {
 	initData.loggerName = loggerName
 	
 	var logger = makeLogger(loggerName, createPass())
+	logger.sync = filterLog.sync
 	if(hasSpecificData) {
 		// They have some logger specifc data they want to use
 		logger.loggerSpecificData = initData
@@ -173,6 +194,8 @@ filterLog.baseInformationGenerator = function() {
 		date: new Date()
 	}
 }
+
+filterLog.sync = false
 
 filterLog.levels = require('./levels')
 

@@ -117,6 +117,10 @@ If you want to enter an object to be logged without benefit of going through any
 
 As a shortcut to defining a "log everything" processor, you can call `filog.createStdOutProcessor()`.
 
+The FilterLog object itself and any loggers created have a property `sync` which determines whether the processing and stream writes will happen immediately or
+take place in another tick. By default, this value is `false`. Each logger created picks up the sync value of the FilterLog object as it was at the time
+of its creation.
+
 
 ## Log Post-processing
 
