@@ -16,9 +16,7 @@ function writeToProcessors(data, sync) {
 			return doIt()
 		}
 		else {
-			setTimeout(() => {
-				doIt
-			}, 1)
+			setTimeout(doIt, 1)
 		}
 	})
 }
